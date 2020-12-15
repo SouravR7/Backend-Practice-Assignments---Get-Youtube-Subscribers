@@ -11,14 +11,8 @@ app.use(bodyParser.json());
 
 app.get("/subscribers", (req,res)=>{
 
-    youtubeSubscriber.find({}, (err, data) => {
-        if(err){
-            res.status(400).json({"message": error.message});
-        }
-        else{
-            res.json(data);
-        }
-    });
+    youtubeSubscriber.find().then(data - res.json(data))
+    .catch(err - res.send(err))
 })
 
 app.get("/subscribers/:id", (req,res)=>{
