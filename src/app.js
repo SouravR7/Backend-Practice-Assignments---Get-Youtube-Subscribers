@@ -1,46 +1,36 @@
 
 const express = require('express');
-const app = express()
+const app = express();
+app.use(express.json());
 
 
 // Your code goes here
 const youtubeSubscriber = require('./models/subscribers');
 
-app.use(express.json());
-app.use(bodyParser.json());
+//const ObjectId = require("mongoose");
 
-app.get("/subscribers", (req,res)=>{
 
-    youtubeSubscriber.find().then(data - res.json(data))
-    .catch(err - res.send(err))
-})
-
-app.get("/subscribers/:id", (req,res)=>{
-
-    youtubeSubscriber.findOne({
-        _id: id,
-    }).then((err,data) => {
-        if (err) {
-            res.status(400).json({"message": error.message});
-        } else{
-            res.json(data);
-        }
-    });
+// Your code goes here
+app.get('/subscribers', (req, res) => {
+    youtubeSubscriber.find().then(subscribers => res.send(subscribers))
+    .catch(error => res.send(error));
+    return;
 });
 
-app.get("/subscribers/:names", (req,res)=>{
 
-    youtubeSubscriber.findOne({
-        _name: name,
-    }).then((err,data) => {
-        if (err) {
-            res.status(400).json({"message": error.message});
-        } else{
-            res.json(data);
-        }
-    });
+app.get('/subscribers/names', (req, res) => {
+    youtubeSubscriber.find().select({name: 1, subscribedChannel: 1})
+        .then(subscribers => res.send(subscribers));
+    return;
 });
 
+
+app.get('/subscribers/:id', (req, res) => {
+    const id = req.params.id;
+    youtubeSubscriber.find({_id : id}).then(subscribers => subscribers.map(subscribers => res.send(subscribers)))
+        .catch(error => res.status(400).send({message: error.message}));
+    return;
+});
 
 
 module.exports = app;
